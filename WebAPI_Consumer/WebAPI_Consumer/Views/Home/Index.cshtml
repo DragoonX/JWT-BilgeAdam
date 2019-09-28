@@ -1,0 +1,55 @@
+﻿<script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        crossorigin="anonymous">
+</script>
+@*Yukarıda JQuery kütüphanesi projeye dahil edilmiştir.*@
+
+<input type="button" value="Token Al" onclick="getToken();" />
+<br />
+<input type="button" value="Value Al" onclick="getValues();" />
+<br />
+<input type="text" value="" id="Token" />
+<hr />
+<p><strong>ÖNEMLİ:</strong>JWT server projesini başlatmadan önce her iki projenin localhost portlarının farklı olduğundan emin olun.</p>
+
+
+
+<script>
+    window.Token = null;
+    //http://localhost:5000/api/authentication/request
+    //http://localhost:5000/api/values
+
+    function getToken() {
+        $.ajax({
+            type: 'POST',
+            url: 'http://localhost:5000/api/authentication/request',
+            data: '{username:"x",password:"y"}',
+            contentType: 'application/json',
+            success: function (resultData) {
+                window.Token = resultData;
+                $('#Token').val(resultData);
+            },
+            error: function (resultData) {
+                console.log(resultData);
+            }
+        });
+    }
+
+    function getValues() {
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost:5000/api/values',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer " + window.Token);
+            },
+            data: {},
+            success: function (data) {
+                console.log(data)
+            },
+            error: function (data) {
+                console.log(data)
+            }
+        });
+    }
+
+</script>
